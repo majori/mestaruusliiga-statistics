@@ -2,8 +2,8 @@ import { Statistics } from './services/api';
 import * as cache from './services/cache';
 
 export async function getAllPlayerStatistics() {
-    const compID = 21;
-    const phaseID = 0;
+    const category = 'regular';
+    const gender = 'men';
 
     try {
         const players = await cache.PlayerStatistics.get();
@@ -12,9 +12,9 @@ export async function getAllPlayerStatistics() {
     } catch (err) {
         if (err === 'NoPlayers') {
             const players = await Statistics.getData({
-                compID,
-                phaseID,
-                maximumRows: await Statistics.getCount({ compID, phaseID })
+                category,
+                gender,
+                maximumRows: await Statistics.getCount({ category, gender })
             });
 
             await cache.PlayerStatistics.set(players);
