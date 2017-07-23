@@ -1,4 +1,3 @@
-import * as data from './data';
 import { createServer } from './server'
 import { Config } from './config'; 
 
