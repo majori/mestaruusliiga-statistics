@@ -2,11 +2,7 @@ import * as redis from 'redis';
 import * as _ from 'lodash';
 import { Config } from '../config';
 
-const client = redis.createClient({
-    port: Config.redis.port,
-    host: Config.redis.host,
-    password: Config.redis.key
-});
+const client = redis.createClient(Config.redis);
 
 export namespace PlayerStatistics {
     // Fields which are meaningful to compare
