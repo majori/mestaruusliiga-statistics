@@ -1,12 +1,8 @@
 import * as redis from 'redis';
 import * as _ from 'lodash';
+import { Config } from '../config';
 
-const config = {
-    host: '127.0.0.1',
-    port: 6379,
-};
-
-const client = redis.createClient(config.port, config.host);
+const client = redis.createClient(Config.redis.port, Config.redis.host);
 
 export namespace PlayerStatistics {
     // Fields which are meaningful to compare
@@ -51,7 +47,7 @@ export namespace PlayerStatistics {
                 })
             });
 
-            multi.expire('players', 20);
+            multi.expire('players', 600);
 
             multi.exec((err) => {
                 if (err) return reject(err);

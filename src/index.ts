@@ -1,9 +1,13 @@
 import * as data from './data';
-import * as _ from 'lodash';
+import { createServer } from './server'
+import { Config } from './config'; 
 
 export async function init() { 
-    const p = await data.getAllPlayerStatistics();
-    console.log(p);
+    const server = await createServer();
+
+    server.listen(Config.http.port, Config.http.hostname, () => {
+        console.log('Server listening');
+    });
 }
 
 init();
