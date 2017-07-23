@@ -1,17 +1,26 @@
 import { Statistics } from './services/api';
-import * as redis from './services/redis';
+import * as cache from './services/cache';
 
 export async function getAllPlayerStatistics() {
     const compID = 21;
     const phaseID = 0;
 
-    const players = await Statistics.getData({
-        compID,
-        phaseID,
-        maximumRows: await Statistics.getCount({ compID, phaseID })
-    });
+    try {
+        const players = await cache.PlayerStatistics.get();
+        return players;
 
-    await redis.PlayerStatistics.set(players);
+    } catch (err) {
+        if (err === 'NoPlayers') {
+            const players = await Statistics.getData({
+                compID,
+                phaseID,
+                maximumRows: await Statistics.getCount({ compID, phaseID })
+            });
 
-    return redis.PlayerStatistics.get();
+            await cache.PlayerStatistics.set(players);
+            return cache.PlayerStatistics.get();
+        } else {
+            throw err;
+        }
+    }
 }

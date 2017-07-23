@@ -9,27 +9,26 @@ const config = {
 const client = redis.createClient(config.port, config.host);
 
 export namespace PlayerStatistics {
+    // Fields which are meaningful to compare
+    const rankedFields = ['Points'];
+
     export async function get() {
         return new Promise((resolve, reject) => {
             client.smembers('players', (err, ids) => {
-                if (_.isEmpty(ids)) {
-                    reject();
-                }
+                if (err) return reject(err);
+                if (_.isEmpty(ids)) return reject('NoPlayers');
 
                 const multi = client.multi();
 
                 _.forEach(ids, (id) => {
                     multi.hgetall(id, (err, x) => {
-                        if (err) { reject(err); }
+                        if (err) return reject(err);
                     });
                 });
                 
                 multi.exec((err, players) => {
-                    if (err) {
-                        reject(err);
-                    } else {
-                        resolve(Mapper.fromRedis(players));
-                    } 
+                    if (err) return reject(err);
+                    resolve(Mapper.fromRedis(players));
                 });
             });
         });
@@ -40,18 +39,21 @@ export namespace PlayerStatistics {
             const multi = client.multi();
 
             _.forEach(Mapper.toRedis(players), (player) => {
-                const id = `player_${player.PlayerID}`;
+                const id = `player:${player.PlayerID}`; // The ID format
                 multi.hmset(id, player);
                 multi.sadd('players', id)
+
+                _.forEach(rankedFields, (field) => {
+                    multi.ZADD(field, player[field] || 0, id);
+                })
             });
 
+            multi.expire('players', 20);
+
             multi.exec((err) => {
-                if (err) {
-                    reject(err);
-                } else {
-                    resolve();
-                }
-            })
+                if (err) return reject(err);
+                resolve();
+            });
         });
     }
 }
