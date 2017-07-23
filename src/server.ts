@@ -13,9 +13,17 @@ export async function createServer() {
         res.render('index', { title: 'Hey', message: 'Hello there!' })
     });
 
-    server.get('/raw', async (req, res) => {
-        res.json(await data.getAllPlayerStatistics());
-    });
+    server.get('/players/:category/:gender/raw', async (req, res) => {
+        if (
+            _.includes(['regular', 'playoffs', 'qualifiers'], req.params.category) &&
+            _.includes(['men', 'women'], req.params.gender)
+        ) {
+            const players = await data.getAllPlayerStatistics(req.params.category, req.params.gender);
+            res.json(players);
+        } else {
+            res.send('Not found');
+        }
+    })
 
     return server;
 } 

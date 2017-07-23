@@ -11,9 +11,9 @@ export namespace PlayerStatistics {
         'SpikeWin', 'RecWin', 'BlockWin', 'ServeWin'
     ];
 
-    export async function get() {
+    export async function get(category: PlayerCategory, gender: PlayerGender) {
         return new Promise<PlayerStatistic[]>((resolve, reject) => {
-            client.smembers('players', (err, ids) => {
+            client.smembers(`players:${category}:${gender}`, (err, ids) => {
                 if (err) return reject(err);
                 if (_.isEmpty(ids)) return reject('NoPlayers');
 
@@ -33,21 +33,21 @@ export namespace PlayerStatistics {
         });
     }
 
-    export async function set(players: PlayerStatistic[]) {
+    export async function set(category: PlayerCategory, gender: PlayerGender, players: PlayerStatistic[]) {
         return new Promise((resolve, reject) => {
             const multi = client.multi();
 
             _.forEach(Mapper.toRedis(players), (player) => {
                 const id = `player:${player.PlayerID}`; // The ID format
                 multi.hmset(id, player);
-                multi.sadd('players', id)
+                multi.sadd(`players:${category}:${gender}`, id)
 
                 _.forEach(rankedFields, (field) => {
                     multi.ZADD(field, player[field] || 0, id);
                 })
             });
 
-            multi.expire('players', 600);
+            multi.expire(`players:${category}:${gender}`, Config.redis.expire);
 
             multi.exec((err) => {
                 if (err) return reject(err);

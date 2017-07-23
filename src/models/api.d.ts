@@ -1,6 +1,9 @@
+type PlayerCategory = 'regular' | 'playoffs' | 'qualifiers';
+type PlayerGender = 'men' | 'women';
+
 interface ICountOptions {
-    category: 'regular' | 'playoffs' | 'qualifiers';
-    gender: 'men' | 'women';
+    category: PlayerCategory;
+    gender: PlayerGender;
     filterExpressions?: any[];
     playerSearchByName?: string;
 }
