@@ -10,10 +10,13 @@ const client = redis.createClient(config.port, config.host);
 
 export namespace PlayerStatistics {
     // Fields which are meaningful to compare
-    const rankedFields = ['Points'];
+    const rankedFields = [
+        'PointsTot_ForAllPlayerStats', 'PointsPerMatch',
+        'SpikeWin', 'RecWin', 'BlockWin', 'ServeWin'
+    ];
 
     export async function get() {
-        return new Promise((resolve, reject) => {
+        return new Promise<PlayerStatistic[]>((resolve, reject) => {
             client.smembers('players', (err, ids) => {
                 if (err) return reject(err);
                 if (_.isEmpty(ids)) return reject('NoPlayers');
@@ -75,7 +78,7 @@ export namespace Mapper {
     export function toRedis(players: PlayerStatistic[]): any {
         return _.map(players, (player: any) => {
             player.Captain = player.Captain ? 1 : 0;
-            return _.pickBy(player, _.identity); // Remove nulls
+            return _.pickBy(player, (value) => !_.isNil(value)); // Remove nulls
         });
     }
 
@@ -83,7 +86,7 @@ export namespace Mapper {
         return _.map(players, (player: any) => {
             player.Captain = Boolean(+player.Captain);
             _.forEach(toNumber, field => {
-                player[field] = +player[field]; // Convert strings back to numbers
+                player[field] = _.toNumber(player[field]); // Convert strings back to numbers
             });
             return player;
         });

@@ -9,7 +9,6 @@ type PlayerStatistic = {
     PlayerID: number;
     PositionID: number;
 
-    PlayerSurnameName: string; // HTML String
     PointsTot_ForAllPlayerStats: number;
     SpikePerf: string; // Percent (xx %)
     SpikePos: string; // Percent (xx %)
@@ -72,6 +71,7 @@ type PlayerStatistic = {
     Number: number;
     Vote: number;
     Surname: string;
+    PlayerSurnameName: string; // HTML String
     Name: string;
     Team: string;
     Match: string;
