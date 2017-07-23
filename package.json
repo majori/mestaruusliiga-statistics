@@ -4,12 +4,17 @@
   "description": "",
   "main": "dist/index.js",
   "scripts": {
+    "start": "node dist/index.js",
+    "build": "tsc --listEmittedFiles",
     "dev": "nodemon --exec ts-node --inspect=5858 src/index.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/majori/mestaruusliiga-statistics.git"
+  },
+  "engines": {
+    "node": "8.1.4"
   },
   "author": "Antti Kivimäki",
   "license": "ISC",
