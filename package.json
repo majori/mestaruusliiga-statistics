@@ -5,7 +5,7 @@
   "main": "dist/index.js",
   "scripts": {
     "start": "node dist/index.js",
-    "build": "tsc --listEmittedFiles",
+    "build": "tsc --listEmittedFiles && gulp",
     "dev": "nodemon --exec ts-node --inspect=5858 src/index.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -38,6 +38,7 @@
     "@types/pug": "^2.0.4",
     "@types/redis": "^2.6.0",
     "@types/superagent": "^3.5.3",
+    "gulp": "^3.9.1",
     "nodemon": "^1.11.0"
   }
 }
