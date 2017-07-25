@@ -1,6 +1,19 @@
-type PlayerStatistic = {
-    __type: 'Micrositi.Entities.PlayerMatch';
+interface PlayerStatistic extends BaseStatistic {
+    ImageUrl?: string;
+    Captain: boolean;
+}
 
+interface RawStatistic extends BaseStatistic {
+    __type: string;
+    PlayerSurnameName: string; // HTML String
+    Captain: boolean;
+}
+
+interface CacheStatistic extends BaseStatistic {
+    Captain: 0 | 1; // Redis does not allow booleans
+}
+
+interface BaseStatistic {
     PlayerMatchID: number;
     RankingTypeID: number;
     ChampionshipMatchID: number;
@@ -66,12 +79,10 @@ type PlayerStatistic = {
     BlockPlus: number;
     BlockHP: number;
     BlockEx: number;
-    
-    Captain: boolean;
+
     Number: number;
     Vote: number;
     Surname: string;
-    PlayerSurnameName: string; // HTML String
     Name: string;
     Team: string;
     Match: string;

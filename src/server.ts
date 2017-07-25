@@ -18,12 +18,19 @@ export async function createServer() {
             _.includes(['regular', 'playoffs', 'qualifiers'], req.params.category) &&
             _.includes(['men', 'women'], req.params.gender)
         ) {
-            const players = await data.getAllPlayerStatistics(req.params.category, req.params.gender);
+            const players = await data.getAllPlayerStatistics({
+                category: req.params.category,
+                gender: req.params.gender
+            });
             res.json(players);
         } else {
             res.send('Not found');
         }
-    })
+    });
+
+    server.get('/players/search', async (req, res) => {
+        res.json(await data.searchPlayers({ Team: 'ducks' }, { gender: 'men', category: 'regular'}))
+    });
 
     return server;
 } 
