@@ -47,3 +47,14 @@ export async function searchPlayers(params: SearchParams, options: PlayerOptions
         }).every(_.identity);
     });
 }
+
+export async function getPlayerFields() {
+    const keys = await cache.PlayerStatistics.getKeys();
+
+    if (_.isEmpty(keys)) {
+        await setupPlayers({ category: 'regular', gender: 'men'});
+        return cache.PlayerStatistics.getKeys();
+    } else {
+        return keys;
+    }
+}

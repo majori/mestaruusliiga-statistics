@@ -27,6 +27,18 @@ export namespace PlayerStatistics {
         });
     }
 
+    export async function getKeys() {
+        return new Promise<string[]>((resolve, reject) => {
+            client.smembers(`keys:player`, (err, keys) => {
+                if (err) {
+                    return reject(err);
+                }
+
+                return resolve(keys);
+            });
+        });
+    }
+
     export async function get(options: PlayerOptions) {
         return new Promise<PlayerStatistic[]>(async (resolve, reject) => {
             const ids = await exists(options);
@@ -45,13 +57,18 @@ export namespace PlayerStatistics {
         });
     }
 
-    export async function set(options: PlayerOptions, players: RawStatistic[]) {
+    export async function set(options: PlayerOptions, rawPlayers: RawStatistic[]) {
         return new Promise<void>((resolve, reject) => {
             const multi = client.multi();
 
-            _.forEach(Mapper.toRedis(players), (player) => {
+            // Refine raw API data
+            const players = Mapper.toRedis(rawPlayers);
+
+            _.forEach(players, (player) => {
                 const id = `player:${player.PlayerID}`; // The ID format
                 multi.hmset(id, player as any);
+                multi.expire(`player:${player.PlayerID}`, Config.redis.expire);
+                
                 multi.sadd(`players:${options.category}:${options.gender}`, id)
 
                 _.forEach(rankedFields, (field) => {
@@ -59,6 +76,10 @@ export namespace PlayerStatistics {
                 })
             });
 
+            // Store keys of player
+            multi.sadd('keys:player', _.chain(players).first<any>().keys().value())
+
+            multi.expire(`keys:player`, Config.redis.expire * 3);
             multi.expire(`players:${options.category}:${options.gender}`, Config.redis.expire);
 
             multi.exec((err) => {
