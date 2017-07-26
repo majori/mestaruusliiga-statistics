@@ -21,11 +21,19 @@ router.use('/:category/:gender', (req: ExtendedRequest, res: Response, next: Nex
     } else {
         res.send("Invalid category or gender");
     }
-})
+});
+
+router.get('/:category/:gender/', (req, res) => {
+    res.render('statistics')
+});
 
 // --------------  PLAYER ROUTER ---------------------
 //
 const playerRouter = express.Router();
+
+playerRouter.get('/', async (req, res) => {
+    res.render('players');
+});
 
 playerRouter.get('/fields', async (req, res) => {
     res.json(await data.getPlayerFields());
