@@ -1,16 +1,35 @@
-interface PlayerStatistic extends BaseStatistic {
-    ImageUrl?: string;
+interface PlayerStatistic extends RefinedStatistics {
     Captain: boolean;
+}
+
+interface CacheStatistic extends RefinedStatistics {
+    Captain: 0 | 1; // Redis does not allow booleans
 }
 
 interface RawStatistic extends BaseStatistic {
     __type: string;
     PlayerSurnameName: string; // HTML String
     Captain: boolean;
+    Surname: string;
+    Name: string;
+
+    SpikePerf: string; // Percent (xx %)
+    SpikePos: string; // Percent (xx %)
+    RecPos: string; // Percent (xx %)
+    RecPerf: string; // Percent (xx %)
 }
 
-interface CacheStatistic extends BaseStatistic {
-    Captain: 0 | 1; // Redis does not allow booleans
+interface RefinedStatistics extends BaseStatistic {
+    ImageUrl?: string;
+    FirstName: string;
+    LastName: string;
+    FullName: string;
+
+    // Percents 0-100
+    SpikePerf: number; 
+    SpikePos: number;
+    RecPos: number;
+    RecPerf: number;
 }
 
 interface BaseStatistic {
@@ -23,10 +42,6 @@ interface BaseStatistic {
     PositionID: number;
 
     PointsTot_ForAllPlayerStats: number;
-    SpikePerf: string; // Percent (xx %)
-    SpikePos: string; // Percent (xx %)
-    RecPos: string; // Percent (xx %)
-    RecPerf: string; // Percent (xx %)
     PointsW_P: number;
     Libero: number;
     SpikeTot: number;
@@ -82,8 +97,6 @@ interface BaseStatistic {
 
     Number: number;
     Vote: number;
-    Surname: string;
-    Name: string;
     Team: string;
     Match: string;
 }

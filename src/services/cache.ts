@@ -70,39 +70,54 @@ export namespace PlayerStatistics {
 }
 
 export namespace Mapper {
-    // Fields which will be converted to numbers
+    // Fields which will be converted back to numbers
     const toNumber = ['PlayerMatchID', 'RankingTypeID', 'ChampionshipMatchID',
         'ChampionshipID','TeamID', 'PlayerID', 'PositionID', 'PointsTot_ForAllPlayerStats', 'PointsW_P',
         'Libero', 'SpikeTot', 'RecTot', 'PlayedMatches', 'PlayedSet', 'SpikeWin_MatchWin',
         'SpikeWin_MatchLose', 'BlockWin_MatchWin', 'BlockWin_MatchLose', 'ServeWin_MatchWin',
-        'ServeWin_MatchLose', 'RecEffPerc', 'RecWinPerc', 'ServeWinMatch', 'ServeWinSet',
+        'ServeWin_MatchLose', 'RecEffPerc', 'RecWinPerc', 'RecPos', 'RecPerf', 'ServeWinMatch', 'ServeWinSet',
         'BlockWinSet', 'SpikerEff', 'SpikerPos', 'SpikerPerSet', 'PointsTot', 'PointsPerMatch',
         'PointsPerSet', 'PlayedSets', 'Points', 'SideOut', 'ServeErr', 'ServeWin', 'ServeMinus',
         'ServePlus', 'ServeHP', 'ServeEx', 'RecErr', 'RecWin', 'RecMinus', 'RecPlus', 'RecHP', 'RecEx',
-        'SpikeErr', 'SpikeWin', 'SpikeMinus', 'SpikePlus', 'SpikeHP', 'SpikeEx', 'BlockErr', 'BlockWin',
+        'SpikeErr', 'SpikeWin', 'SpikeMinus', 'SpikePerf', 'SpikePlus', 'SpikeHP', 'SpikeEx', 'SpikePos', 'BlockErr', 'BlockWin',
         'BlockMinus', 'BlockPlus', 'BlockHP', 'BlockEx', 'Number', 'Vote'
     ];
 
     export function toRedis(players: RawStatistic[]): CacheStatistic[] {
         return _.map(players, (player: any) => {
-            // Convert boolean to number
-            player.Captain = player.Captain ? 1 : 0;
+            return _.chain(player)
+                .assign({
+                    FirstName: player.Name,
+                    LastName: player.Surname,
+                    FullName: `${player.Name} ${player.Surname}`,
+                    ImageUrl: `http://dataprojectimages.cloudapp.net:8080/lml/TeamPlayer/100/200/TeamPlayer_${player.TeamID}_${player.PlayerID}.jpg`,
 
-            // Remove useless fields
-            player.PlayerSurnameName = undefined;
-            player.__type = undefined;
+                    Captain: player.Captain ? 1 : 0, // Convert boolean to number
 
-            return _.pickBy(player, (value) => !_.isNil(value)); // Remove nulls
+                    // Remove "%" from strings and convert to number
+                    SpikePerf: _.chain(player.SpikePerf as string).words().first<any>().toNumber().value(), 
+                    SpikePos: _.chain(player.SpikePos as string).words().first<any>().toNumber().value(),
+                    RecPos: _.chain(player.RecPos as string).words().first<any>().toNumber().value(),
+                    RecPerf: _.chain(player.RecPerf as string).words().first<any>().toNumber().value(),
+                })
+                .omit(['__type', 'Name', 'Surname', 'PlayerSurnameName']) // Remove useless fields
+                .pickBy((value) => !_.isNil(value)) // Remove nulls
+                .value() as CacheStatistic;
         });
     }
 
     export function fromRedis(players: CacheStatistic[]): PlayerStatistic[] {
         return _.map(players, (player: any) => {
-            player.Captain = Boolean(+player.Captain);
-            player.ImageUrl = `http://dataprojectimages.cloudapp.net:8080/lml/TeamPlayer/100/200/TeamPlayer_${player.TeamID}_${player.PlayerID}.jpg`;
-            _.forEach(toNumber, field => {
-                player[field] = _.toNumber(player[field]); // Convert strings back to numbers
+
+            _.assign(player, {
+                Captain: Boolean(+player.Captain),
             });
+
+            // Convert strings back to numbers
+            _.forEach(toNumber, field => {
+                player[field] = _.toNumber(player[field]); 
+            });
+
             return player;
         });
     }

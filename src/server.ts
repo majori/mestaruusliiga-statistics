@@ -1,4 +1,6 @@
 import * as express from 'express';
+import { Request, Response, NextFunction} from 'express';
+import { ExtendedRequest } from './models/http';
 import * as _ from 'lodash';
 import * as path from 'path';
 import * as data from './data';
@@ -13,24 +15,33 @@ export async function createServer() {
         res.render('index', { title: 'Hey', message: 'Hello there!' })
     });
 
-    server.get('/players/:category/:gender/raw', async (req, res) => {
+    const playerRouter = express.Router({ mergeParams: true });
+
+    playerRouter.use((req: ExtendedRequest, res: Response, next: NextFunction) => {
         if (
             _.includes(['regular', 'playoffs', 'qualifiers'], req.params.category) &&
             _.includes(['men', 'women'], req.params.gender)
         ) {
-            const players = await data.getAllPlayerStatistics({
-                category: req.params.category,
-                gender: req.params.gender
-            });
-            res.json(players);
+            req.options = {
+                category: req.params.category as PlayerCategory,
+                gender: req.params.gender as PlayerGender
+            };
+
+            next();
         } else {
-            res.send('Not found');
+            res.send("Invalid category or gender");
         }
+    })
+
+    playerRouter.get('/raw', async (req: ExtendedRequest, res) => {
+        res.json(await data.getAllPlayerStatistics(req.options));
     });
 
-    server.get('/players/search', async (req, res) => {
-        res.json(await data.searchPlayers({ Team: 'ducks' }, { gender: 'men', category: 'regular'}))
+    playerRouter.get('/search/raw', async (req: ExtendedRequest, res) => {
+        res.json(await data.searchPlayers(req.query, req.options))
     });
+
+    server.use('/players/:category/:gender', playerRouter);
 
     return server;
 } 
