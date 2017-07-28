@@ -24,7 +24,7 @@ router.use('/:category/:gender', (req: ExtendedRequest, res: Response, next: Nex
 });
 
 router.get('/:category/:gender/', (req, res) => {
-    res.render('statistics')
+    res.render('pages/statistics')
 });
 
 // --------------  PLAYER ROUTER ---------------------
@@ -32,7 +32,7 @@ router.get('/:category/:gender/', (req, res) => {
 const playerRouter = express.Router();
 
 playerRouter.get('/', async (req, res) => {
-    res.render('players');
+    res.render('pages/players');
 });
 
 playerRouter.get('/fields', async (req, res) => {
