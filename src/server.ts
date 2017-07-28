@@ -12,6 +12,8 @@ export async function createServer() {
     server.set('view engine', 'pug');
     server.set('views', path.join(__dirname, 'views'));
 
+    server.use('/styles', express.static(path.join(__dirname, 'styles')));
+
     server.get('/', (req, res) => {
         res.render('index', { title: 'Hey', message: 'Hello there!' })
     });
