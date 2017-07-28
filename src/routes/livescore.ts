@@ -10,7 +10,7 @@ import { ExtendedRequest } from '../models/http';
 const router = express.Router();
 
 router.get('/mestaruusliiga/:id/raw', async (req, res) => {
-    res.send(await Livescore.get(req.params.id, ScorePageEnum.MestaruusLiiga));
+    res.json(await Livescore.get(req.params.id, ScorePageEnum.MestaruusLiiga));
 });
 
 export default router;

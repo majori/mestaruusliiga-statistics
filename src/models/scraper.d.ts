@@ -3,3 +3,8 @@ interface PageOptions {
 }
 
 interface ScorePageOptions extends PageOptions {}
+
+interface ScraperPage {
+    id: string;
+    requestedAt: number;
+}

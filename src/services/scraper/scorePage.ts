@@ -10,3 +10,7 @@ export abstract class ScorePage extends Page {
 export enum ScorePageEnum {
     MestaruusLiiga = 'mliiga',
 }
+
+export interface ScoreScraperPage extends ScraperPage {
+    page: ScorePage;
+}

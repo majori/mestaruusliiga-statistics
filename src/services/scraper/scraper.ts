@@ -2,18 +2,12 @@ import { PhantomJS, WebPage, create as createInstance} from 'phantom';
 import * as _ from 'lodash';
 import { EventEmitter } from 'events';
 
-import { ScorePage } from './scorePage';
+import { ScorePage, ScoreScraperPage } from './scorePage';
 import { MestaruusliigaScorePage } from './scorePages/mestaruusliiga';
 
-class ScraperPage {
-    public id: string;
-    public requestedAt: number;
-}
-
-class ScoreScraperPage extends ScraperPage {
-    public page: ScorePage;
-}
-
+// This class controls opened pages and process
+// them every `updateInterval` second. If nobody requests the content of the opened
+// page, it will be closed automatically after `expireTime`
 export class Scraper {
     
     private instance?: PhantomJS;
@@ -27,6 +21,7 @@ export class Scraper {
             scorePages: {},
         };
 
+        // Set continuous task to check and proccess open pages
         setInterval(() => this.processScorePages(), this.updateInterval)
     }
 
@@ -34,12 +29,14 @@ export class Scraper {
         this.instance = await createInstance();
     }
 
+    // Give more time to page before expiring
     extendPageExpireTime(id: string) {
         if (this.scorePageIsOpen(id)) {
             this.openPages.scorePages[id].requestedAt = Date.now();
         }
     }
 
+    // Check if page with given ID is open
     scorePageIsOpen(id: string): boolean {
         return _.has(this.openPages.scorePages, id);
     }
@@ -61,17 +58,20 @@ export class Scraper {
     }
 
     async processScorePages() {
+        // Check if there is any active pages
         if (!_.isEmpty(this.openPages.scorePages)) {
             console.log(`Processing ${_.size(this.openPages.scorePages)} pages`)
             const now = Date.now();
 
             _.forEach(this.openPages.scorePages, async (pageInfo) => {
+                
+                // Page hasn't expired yet, get scores 
                 if (now - pageInfo.requestedAt < this.expireTime) {
                     const scores = await pageInfo.page.evaluateScores();
                     this.onUpdate.emit('update', { id: pageInfo.id, scores });
 
+                // Page has expired, close it
                 } else {
-                    // Page has expired, close it
                     console.log('Closing page', pageInfo.id);
                     pageInfo.page.close();
                     delete this.openPages.scorePages[pageInfo.id]
@@ -84,6 +84,7 @@ export class Scraper {
     async close() {
         if (!this.instance) throw new Error();
 
+        // Close all open pages
         if (_.isEmpty(this.openPages.scorePages)) {
             for(let page of _.values(this.openPages.scorePages)) {
                 await page.page.close()
@@ -94,6 +95,7 @@ export class Scraper {
     }
 }
 
+// The abstract base page class which controls opening page to specific url and closing it
 export abstract class Page {
     abstract id: string;
     private waitTime: number = 4000;
