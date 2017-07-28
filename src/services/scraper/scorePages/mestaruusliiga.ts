@@ -1,7 +1,7 @@
-import { ScorePage } from '../scorePage';
+import { ScorePage, ScorePageEnum } from '../scorePage';
 
 export class MestaruusliigaScorePage extends ScorePage {
-    public id: string = 'mliiga';
+    public id: string = ScorePageEnum.MestaruusLiiga;
 
     url(options: ScorePageOptions) {
         return `http://lml-web.dataproject.com/DV_LiveScore.aspx?ID=${this.options.id}`;

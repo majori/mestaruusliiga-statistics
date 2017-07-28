@@ -3,7 +3,7 @@ import { Request, Response, NextFunction} from 'express';
 import { ExtendedRequest } from '../models/http';
 import * as _ from 'lodash';
 import * as path from 'path';
-import * as data from '../data';
+import { Statistics } from '../data';
 
 const router = express.Router();
 
@@ -36,15 +36,15 @@ playerRouter.get('/', async (req, res) => {
 });
 
 playerRouter.get('/fields', async (req, res) => {
-    res.json(await data.getPlayerFields());
+    res.json(await Statistics.getPlayerFields());
 });
 
 playerRouter.get('/raw', async (req: ExtendedRequest, res) => {
-    res.json(await data.getAllPlayerStatistics(req.options));
+    res.json(await Statistics.getAllPlayerStatistics(req.options));
 });
 
 playerRouter.get('/search/raw', async (req: ExtendedRequest, res) => {
-    res.json(await data.searchPlayers(req.query, req.options))
+    res.json(await Statistics.searchPlayers(req.query, req.options))
 });
 
 router.use('/:category/:gender/players', playerRouter);

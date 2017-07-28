@@ -88,58 +88,84 @@ export namespace PlayerStatistics {
             });
         });
     }
+
+    export namespace Mapper {
+        // Fields which will be converted back to numbers
+        const toNumber = ['PlayerMatchID', 'RankingTypeID', 'ChampionshipMatchID',
+            'ChampionshipID','TeamID', 'PlayerID', 'PositionID', 'PointsTot_ForAllPlayerStats', 'PointsW_P',
+            'Libero', 'SpikeTot', 'RecTot', 'PlayedMatches', 'PlayedSet', 'SpikeWin_MatchWin',
+            'SpikeWin_MatchLose', 'BlockWin_MatchWin', 'BlockWin_MatchLose', 'ServeWin_MatchWin',
+            'ServeWin_MatchLose', 'RecEffPerc', 'RecWinPerc', 'RecPos', 'RecPerf', 'ServeWinMatch', 'ServeWinSet',
+            'BlockWinSet', 'SpikerEff', 'SpikerPos', 'SpikerPerSet', 'PointsTot', 'PointsPerMatch',
+            'PointsPerSet', 'PlayedSets', 'Points', 'SideOut', 'ServeErr', 'ServeWin', 'ServeMinus',
+            'ServePlus', 'ServeHP', 'ServeEx', 'RecErr', 'RecWin', 'RecMinus', 'RecPlus', 'RecHP', 'RecEx',
+            'SpikeErr', 'SpikeWin', 'SpikeMinus', 'SpikePerf', 'SpikePlus', 'SpikeHP', 'SpikeEx', 'SpikePos', 'BlockErr', 'BlockWin',
+            'BlockMinus', 'BlockPlus', 'BlockHP', 'BlockEx', 'Number', 'Vote'
+        ];
+
+        export function toRedis(players: RawStatistic[]): CacheStatistic[] {
+            return _.map(players, (player: any) => {
+                return _.chain(player)
+                    .assign({
+                        FirstName: player.Name,
+                        LastName: player.Surname,
+                        FullName: `${player.Name} ${player.Surname}`,
+                        ImageUrl: `http://dataprojectimages.cloudapp.net:8080/lml/TeamPlayer/100/200/TeamPlayer_${player.TeamID}_${player.PlayerID}.jpg`,
+
+                        Captain: player.Captain ? 1 : 0, // Convert boolean to number
+
+                        // Remove "%" from strings and convert to number
+                        SpikePerf: _.chain(player.SpikePerf as string).words().first<any>().toNumber().value(), 
+                        SpikePos: _.chain(player.SpikePos as string).words().first<any>().toNumber().value(),
+                        RecPos: _.chain(player.RecPos as string).words().first<any>().toNumber().value(),
+                        RecPerf: _.chain(player.RecPerf as string).words().first<any>().toNumber().value(),
+                    })
+                    .omit(['__type', 'Name', 'Surname', 'PlayerSurnameName']) // Remove useless fields
+                    .pickBy((value) => !_.isNil(value)) // Remove nulls
+                    .value() as CacheStatistic;
+            });
+        }
+
+        export function fromRedis(players: CacheStatistic[]): PlayerStatistic[] {
+            return _.map(players, (player: any) => {
+
+                _.assign(player, {
+                    Captain: Boolean(+player.Captain),
+                });
+
+                // Convert strings back to numbers
+                _.forEach(toNumber, field => {
+                    player[field] = _.toNumber(player[field]); 
+                });
+
+                return player;
+            });
+        }
+    }
 }
 
-export namespace Mapper {
-    // Fields which will be converted back to numbers
-    const toNumber = ['PlayerMatchID', 'RankingTypeID', 'ChampionshipMatchID',
-        'ChampionshipID','TeamID', 'PlayerID', 'PositionID', 'PointsTot_ForAllPlayerStats', 'PointsW_P',
-        'Libero', 'SpikeTot', 'RecTot', 'PlayedMatches', 'PlayedSet', 'SpikeWin_MatchWin',
-        'SpikeWin_MatchLose', 'BlockWin_MatchWin', 'BlockWin_MatchLose', 'ServeWin_MatchWin',
-        'ServeWin_MatchLose', 'RecEffPerc', 'RecWinPerc', 'RecPos', 'RecPerf', 'ServeWinMatch', 'ServeWinSet',
-        'BlockWinSet', 'SpikerEff', 'SpikerPos', 'SpikerPerSet', 'PointsTot', 'PointsPerMatch',
-        'PointsPerSet', 'PlayedSets', 'Points', 'SideOut', 'ServeErr', 'ServeWin', 'ServeMinus',
-        'ServePlus', 'ServeHP', 'ServeEx', 'RecErr', 'RecWin', 'RecMinus', 'RecPlus', 'RecHP', 'RecEx',
-        'SpikeErr', 'SpikeWin', 'SpikeMinus', 'SpikePerf', 'SpikePlus', 'SpikeHP', 'SpikeEx', 'SpikePos', 'BlockErr', 'BlockWin',
-        'BlockMinus', 'BlockPlus', 'BlockHP', 'BlockEx', 'Number', 'Vote'
-    ];
+export namespace Livescore {
+    export async function get(id: string): Promise<MatchPoints> {
+        return new Promise<MatchPoints>(async (resolve, reject) => {
+            client.get(`livescore:${id}`, (err, data: string) => {
+                if (err) {
+                    return reject(err);
+                }
 
-    export function toRedis(players: RawStatistic[]): CacheStatistic[] {
-        return _.map(players, (player: any) => {
-            return _.chain(player)
-                .assign({
-                    FirstName: player.Name,
-                    LastName: player.Surname,
-                    FullName: `${player.Name} ${player.Surname}`,
-                    ImageUrl: `http://dataprojectimages.cloudapp.net:8080/lml/TeamPlayer/100/200/TeamPlayer_${player.TeamID}_${player.PlayerID}.jpg`,
-
-                    Captain: player.Captain ? 1 : 0, // Convert boolean to number
-
-                    // Remove "%" from strings and convert to number
-                    SpikePerf: _.chain(player.SpikePerf as string).words().first<any>().toNumber().value(), 
-                    SpikePos: _.chain(player.SpikePos as string).words().first<any>().toNumber().value(),
-                    RecPos: _.chain(player.RecPos as string).words().first<any>().toNumber().value(),
-                    RecPerf: _.chain(player.RecPerf as string).words().first<any>().toNumber().value(),
-                })
-                .omit(['__type', 'Name', 'Surname', 'PlayerSurnameName']) // Remove useless fields
-                .pickBy((value) => !_.isNil(value)) // Remove nulls
-                .value() as CacheStatistic;
+                resolve(JSON.parse(data));
+            })
         });
     }
 
-    export function fromRedis(players: CacheStatistic[]): PlayerStatistic[] {
-        return _.map(players, (player: any) => {
+    export async function set(id: string, points: MatchPoints) {
+        return new Promise<void>(async (resolve, reject) => {
+            client.set(`livescore:${id}`, JSON.stringify(points), 'EX', 20, (err) => {
+                if (err) {
+                    return reject(err);
+                }
 
-            _.assign(player, {
-                Captain: Boolean(+player.Captain),
-            });
-
-            // Convert strings back to numbers
-            _.forEach(toNumber, field => {
-                player[field] = _.toNumber(player[field]); 
-            });
-
-            return player;
+                resolve();
+            })
         });
     }
 }

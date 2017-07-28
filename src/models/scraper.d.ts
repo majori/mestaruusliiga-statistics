@@ -2,6 +2,4 @@ interface PageOptions {
     id: string;
 }
 
-interface ScorePageOptions extends PageOptions {
-    
-}
+interface ScorePageOptions extends PageOptions {}

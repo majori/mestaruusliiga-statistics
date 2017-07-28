@@ -6,3 +6,7 @@ export abstract class ScorePage extends Page {
         return this.page.evaluate(this.parseScores);
     }
 }
+
+export enum ScorePageEnum {
+    MestaruusLiiga = 'mliiga',
+}

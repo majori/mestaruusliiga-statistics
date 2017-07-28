@@ -1,7 +1,9 @@
 import { PhantomJS, WebPage, create as createInstance} from 'phantom';
+import * as _ from 'lodash';
+import { EventEmitter } from 'events';
+
 import { ScorePage } from './scorePage';
 import { MestaruusliigaScorePage } from './scorePages/mestaruusliiga';
-import * as _ from 'lodash';
 
 class ScraperPage {
     public id: string;
@@ -15,21 +17,31 @@ class ScoreScraperPage extends ScraperPage {
 export class Scraper {
     
     private instance?: PhantomJS;
-    private openPages: {
-        scorePages: ScoreScraperPage[];
-    }
+    private openPages: { scorePages: { [key: string]: ScoreScraperPage } };
     private updateInterval: number = 5000;
+    private expireTime: number = 60 * 1000;
+    public onUpdate: EventEmitter = new EventEmitter();
 
     constructor() {
         this.openPages = {
-            scorePages: [],
+            scorePages: {},
         };
 
         setInterval(() => this.processScorePages(), this.updateInterval)
     }
 
-    async create() {
+    async init() {
         this.instance = await createInstance();
+    }
+
+    extendPageExpireTime(id: string) {
+        if (this.scorePageIsOpen(id)) {
+            this.openPages.scorePages[id].requestedAt = Date.now();
+        }
+    }
+
+    scorePageIsOpen(id: string): boolean {
+        return _.has(this.openPages.scorePages, id);
     }
 
     async createScorePage(scorePageClass: typeof MestaruusliigaScorePage, pageOptions: PageOptions) {
@@ -37,20 +49,34 @@ export class Scraper {
 
         const scorePage = new scorePageClass(await this.instance.createPage(), pageOptions);
         await scorePage.openPage();
-        this.openPages.scorePages.push({
-            id: `${scorePage.id}:${pageOptions.id}`,
+
+        const id = `${scorePage.id}:${pageOptions.id}`;
+        this.openPages.scorePages[id] = {
+            id,
             requestedAt: Date.now(),
             page: scorePage
-        });
-        return scorePage;
+        };
+
+        return id;
     }
 
     async processScorePages() {
         if (!_.isEmpty(this.openPages.scorePages)) {
+            console.log(`Processing ${_.size(this.openPages.scorePages)} pages`)
+            const now = Date.now();
+
             _.forEach(this.openPages.scorePages, async (pageInfo) => {
-                const scores = await pageInfo.page.evaluateScores();
+                if (now - pageInfo.requestedAt < this.expireTime) {
+                    const scores = await pageInfo.page.evaluateScores();
+                    this.onUpdate.emit('update', { id: pageInfo.id, scores });
+
+                } else {
+                    // Page has expired, close it
+                    console.log('Closing page', pageInfo.id);
+                    pageInfo.page.close();
+                    delete this.openPages.scorePages[pageInfo.id]
+                }
                 
-                // TODO: Save scores to redis
             });
         }
     }
@@ -59,7 +85,7 @@ export class Scraper {
         if (!this.instance) throw new Error();
 
         if (_.isEmpty(this.openPages.scorePages)) {
-            for(let page of this.openPages.scorePages) {
+            for(let page of _.values(this.openPages.scorePages)) {
                 await page.page.close()
             }
         }
@@ -70,7 +96,7 @@ export class Scraper {
 
 export abstract class Page {
     abstract id: string;
-    private waitTime: number = 5000;
+    private waitTime: number = 4000;
 
     constructor(public page: WebPage, public options: PageOptions) {}
 
