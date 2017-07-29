@@ -4,16 +4,10 @@ block content
   .livescore-board
     table
       tbody
-        tr(class='home')
-          td(class='team-name')= home.name
-          td(class='rounds-won')= home.roundsWon
-          - for (var x = 0; x < 6; x++)
-            if home.roundsWon + guest.roundsWon >= x
-              td(class='round-score')= home.scores[x]
-
-        tr(class='guest')
-          td(class='team-name')= guest.name
-          td(class='rounds-won')= guest.roundsWon
-          - for (var x = 0; x < 6; x++)
-            if home.roundsWon + guest.roundsWon >= x
-              td(class='round-score')= guest.scores[x]
+        each team in ['home', 'guest']
+          tr(class=team)
+            td(class='team-name')= self[team].name
+            td(class='rounds-won')= self[team].roundsWon
+            - for (var x = 0; x < 6; x++)
+              if self.home.roundsWon + self.guest.roundsWon >= x
+                td(class='round-score')= self[team].scores[x]
