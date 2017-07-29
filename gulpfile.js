@@ -4,7 +4,7 @@ const sass = require('gulp-sass');
 const BUILD_DIR = './dist';
 
 gulp.task('copy-views', () => {
-    return gulp.src(['./src/views/*.pug']).pipe(gulp.dest(`${BUILD_DIR}/views`));
+    return gulp.src(['./src/views/**/*.pug']).pipe(gulp.dest(`${BUILD_DIR}/views`));
 });
 
 gulp.task('sass', () => {
