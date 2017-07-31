@@ -2,6 +2,7 @@ import { PhantomJS, WebPage, create as createInstance} from 'phantom';
 import * as _ from 'lodash';
 import { EventEmitter } from 'events';
 
+import { Config } from '../../config';
 import { ScorePage, ScoreScraperPage } from './scorePage';
 import { MestaruusliigaScorePage } from './scorePages/mestaruusliiga';
 
@@ -12,8 +13,8 @@ export class Scraper {
     
     private instance?: PhantomJS;
     private openPages: { scorePages: { [key: string]: ScoreScraperPage } };
-    private updateInterval: number = 5000;
-    private expireTime: number = 60 * 1000;
+    private updateInterval: number = Config.scraper.processInterval;
+    private expireTime: number = Config.scraper.pageExpire;
     public onUpdate: EventEmitter = new EventEmitter();
 
     constructor() {

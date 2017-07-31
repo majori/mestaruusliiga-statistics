@@ -79,8 +79,8 @@ export namespace PlayerStatistics {
             // Store keys of player
             multi.sadd('keys:player', _.chain(players).first<any>().keys().value())
 
-            multi.expire(`keys:player`, Config.redis.expire * 3);
-            multi.expire(`players:${options.category}:${options.gender}`, Config.redis.expire);
+            multi.expire(`keys:player`, Config.redis.expire.players * 3);
+            multi.expire(`players:${options.category}:${options.gender}`, Config.redis.expire.players);
 
             multi.exec((err) => {
                 if (err) return reject(err);
