@@ -1,15 +1,6 @@
-interface PlayerStatistic extends RefinedStatistics {
-    Captain: boolean;
-}
-
-interface CacheStatistic extends RefinedStatistics {
-    Captain: 0 | 1; // Redis does not allow booleans
-}
-
 interface RawStatistic extends BaseStatistic {
     __type: string;
     PlayerSurnameName: string; // HTML String
-    Captain: boolean;
     Surname: string;
     Name: string;
 
@@ -95,6 +86,7 @@ interface BaseStatistic {
     BlockHP: number;
     BlockEx: number;
 
+    Captain: boolean;
     Number: number;
     Vote: number;
     Team: string;

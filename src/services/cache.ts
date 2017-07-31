@@ -40,19 +40,19 @@ export namespace PlayerStatistics {
     }
 
     export async function get(options: PlayerOptions) {
-        return new Promise<PlayerStatistic[]>(async (resolve, reject) => {
+        return new Promise<RefinedStatistics[]>(async (resolve, reject) => {
             const ids = await exists(options);
             const multi = client.multi();
 
             _.forEach(ids, (id) => {
-                multi.hgetall(id, (err, x) => {
+                multi.get(id, err => {
                     if (err) return reject(err);
                 });
             });
             
             multi.exec((err, players) => {
                 if (err) return reject(err);
-                resolve(Mapper.fromRedis(players));
+                resolve(_.map(players, player => JSON.parse(player)));
             });
         });
     }
@@ -62,17 +62,16 @@ export namespace PlayerStatistics {
             const multi = client.multi();
 
             // Refine raw API data
-            const players = Mapper.toRedis(rawPlayers);
+            const players = Mapper.processPlayers(rawPlayers);
 
             _.forEach(players, (player) => {
                 const id = `player:${player.PlayerID}`; // The ID format
-                multi.hmset(id, player as any);
-                multi.expire(`player:${player.PlayerID}`, Config.redis.expire);
+                multi.set(id, JSON.stringify(player), 'EX', Config.redis.expire.players);
                 
                 multi.sadd(`players:${options.category}:${options.gender}`, id)
 
                 _.forEach(rankedFields, (field) => {
-                    multi.ZADD(field, _.get<CacheStatistic, number>(player, field) || 0, id);
+                    multi.ZADD(field, _.get<RefinedStatistics, number>(player, field) || 0, id);
                 })
             });
 
@@ -90,20 +89,7 @@ export namespace PlayerStatistics {
     }
 
     export namespace Mapper {
-        // Fields which will be converted back to numbers
-        const toNumber = ['PlayerMatchID', 'RankingTypeID', 'ChampionshipMatchID',
-            'ChampionshipID','TeamID', 'PlayerID', 'PositionID', 'PointsTot_ForAllPlayerStats', 'PointsW_P',
-            'Libero', 'SpikeTot', 'RecTot', 'PlayedMatches', 'PlayedSet', 'SpikeWin_MatchWin',
-            'SpikeWin_MatchLose', 'BlockWin_MatchWin', 'BlockWin_MatchLose', 'ServeWin_MatchWin',
-            'ServeWin_MatchLose', 'RecEffPerc', 'RecWinPerc', 'RecPos', 'RecPerf', 'ServeWinMatch', 'ServeWinSet',
-            'BlockWinSet', 'SpikerEff', 'SpikerPos', 'SpikerPerSet', 'PointsTot', 'PointsPerMatch',
-            'PointsPerSet', 'PlayedSets', 'Points', 'SideOut', 'ServeErr', 'ServeWin', 'ServeMinus',
-            'ServePlus', 'ServeHP', 'ServeEx', 'RecErr', 'RecWin', 'RecMinus', 'RecPlus', 'RecHP', 'RecEx',
-            'SpikeErr', 'SpikeWin', 'SpikeMinus', 'SpikePerf', 'SpikePlus', 'SpikeHP', 'SpikeEx', 'SpikePos', 'BlockErr', 'BlockWin',
-            'BlockMinus', 'BlockPlus', 'BlockHP', 'BlockEx', 'Number', 'Vote'
-        ];
-
-        export function toRedis(players: RawStatistic[]): CacheStatistic[] {
+        export function processPlayers(players: RawStatistic[]): RefinedStatistics[] {
             return _.map(players, (player: any) => {
                 return _.chain(player)
                     .assign({
@@ -112,8 +98,6 @@ export namespace PlayerStatistics {
                         FullName: `${player.Name} ${player.Surname}`,
                         ImageUrl: `http://dataprojectimages.cloudapp.net:8080/lml/TeamPlayer/100/200/TeamPlayer_${player.TeamID}_${player.PlayerID}.jpg`,
 
-                        Captain: player.Captain ? 1 : 0, // Convert boolean to number
-
                         // Remove "%" from strings and convert to number
                         SpikePerf: _.chain(player.SpikePerf as string).words().first<any>().toNumber().value(), 
                         SpikePos: _.chain(player.SpikePos as string).words().first<any>().toNumber().value(),
@@ -121,24 +105,7 @@ export namespace PlayerStatistics {
                         RecPerf: _.chain(player.RecPerf as string).words().first<any>().toNumber().value(),
                     })
                     .omit(['__type', 'Name', 'Surname', 'PlayerSurnameName']) // Remove useless fields
-                    .pickBy((value) => !_.isNil(value)) // Remove nulls
-                    .value() as CacheStatistic;
-            });
-        }
-
-        export function fromRedis(players: CacheStatistic[]): PlayerStatistic[] {
-            return _.map(players, (player: any) => {
-
-                _.assign(player, {
-                    Captain: Boolean(+player.Captain),
-                });
-
-                // Convert strings back to numbers
-                _.forEach(toNumber, field => {
-                    player[field] = _.toNumber(player[field]); 
-                });
-
-                return player;
+                    .value() as RefinedStatistics;
             });
         }
     }

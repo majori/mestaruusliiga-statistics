@@ -38,7 +38,7 @@ export namespace Statistics {
 
         return _.filter(players, (player) => {
             return _(params).map((searchValue: any, key: string) => {
-                const value = _.get<PlayerStatistic, string | number>(player, key);
+                const value = _.get<RefinedStatistics, string | number>(player, key);
 
                 if (_.isObject(searchValue) && _.isNumber(value)) {
                     return _.inRange(value, searchValue.min || 0, searchValue.max)
