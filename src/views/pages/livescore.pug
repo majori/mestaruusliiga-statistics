@@ -8,6 +8,7 @@ block content
           tr(class=team)
             td(class='team-name')= self[team].name
             td(class='rounds-won')= self[team].roundsWon
-            - for (var x = 0; x < 6; x++)
-              if self.home.roundsWon + self.guest.roundsWon >= x
+            - var rounds = (self.home.roundsWon >= 3 || self.guest.roundsWon >= 3) ? (self.home.roundsWon + self.guest.roundsWon - 1) : 5;
+            - for (var x = 0; x <= rounds; x++)
+              - if (self.home.roundsWon + self.guest.roundsWon >= x)
                 td(class='round-score')= self[team].scores[x]
