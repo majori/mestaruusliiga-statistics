@@ -1,8 +1,9 @@
 import * as express from 'express';
 import { Request, Response, NextFunction} from 'express';
-import { ExtendedRequest } from '../models/http';
 import * as _ from 'lodash';
 import * as path from 'path';
+
+import { ExtendedRequest } from '../models/http';
 import { Statistics } from '../data';
 
 const router = express.Router();

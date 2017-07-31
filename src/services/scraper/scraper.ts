@@ -49,6 +49,8 @@ export class Scraper {
         await scorePage.openPage();
 
         const id = `${scorePage.id}:${pageOptions.id}`;
+
+        console.log(`New score page opened with id ${id}`);
         this.openPages.scorePages[id] = {
             id,
             requestedAt: Date.now(),
@@ -61,7 +63,6 @@ export class Scraper {
     async processScorePages() {
         // Check if there is any active pages
         if (!_.isEmpty(this.openPages.scorePages)) {
-            console.log(`Processing ${_.size(this.openPages.scorePages)} pages`)
             const now = Date.now();
 
             _.forEach(this.openPages.scorePages, async (pageInfo) => {
