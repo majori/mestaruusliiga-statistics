@@ -1,14 +1,40 @@
 extends ../layout/root
 
 block content
-  .livescore-board
-    table
-      tbody
-        each team in ['home', 'guest']
-          tr(class=team)
-            td(class='team-name')= self[team].name
-            td(class='rounds-won')= self[team].roundsWon
-            - var rounds = (self.home.roundsWon >= 3 || self.guest.roundsWon >= 3) ? (self.home.roundsWon + self.guest.roundsWon - 1) : 5;
-            - for (var x = 0; x <= rounds; x++)
-              - if (self.home.roundsWon + self.guest.roundsWon >= x)
-                td(class='round-score')= self[team].scores[x]
+
+  - var roundsPlayed = self.home.roundsWon + self.guest.roundsWon
+  - var maxRounds = (self.home.roundsWon >= 3 || self.guest.roundsWon >= 3) ? (roundsPlayed - 1) : 5;
+
+  .livescore
+    .livescore-wrapper
+      .livescore-names.column
+        .team-name.home= self.home.name
+        .team-name.guest= self.guest.name
+
+      .livescore-divider.column
+
+      .livescore-rounds.column
+        .rounds.home= self.home.roundsWon
+        .rounds.guest= self.guest.roundsWon
+
+      .livescore-divider.column
+
+      .livescore-scores.column
+        .score-1.column
+          .score.home= self.home.scores[0]
+          .score.guest= self.guest.scores[0]
+        .score-2.column
+          .score.home= self.home.scores[1]
+          .score.guest= self.guest.scores[1]
+        .score-3.column
+          .score.home= self.home.scores[2]
+          .score.guest= self.guest.scores[2]
+        .score-4.column
+          .score.home= self.home.scores[3]
+          .score.guest= self.guest.scores[3]
+        .score-5.column
+          .score.home= self.home.scores[4]
+          .score.guest= self.guest.scores[4]
+        .score-6.column
+          .score.home= self.home.scores[5]
+          .score.guest= self.guest.scores[5]

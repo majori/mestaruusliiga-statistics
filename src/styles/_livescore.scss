@@ -1,32 +1,29 @@
 $border-color: grey;
 
-.livescore-board {
-    table {
-        border: 1px solid $border-color;
-        border-collapse: collapse;
-        background: #ffd1d1; /* Old browsers */
-        background: -moz-linear-gradient(top, #ffd1d1 29%, #f4c1c1 53%, #ffd1d1 88%); /* FF3.6-15 */
-        background: -webkit-linear-gradient(top, #ffd1d1 29%,#f4c1c1 53%,#ffd1d1 88%); /* Chrome10-25,Safari5.1-6 */
-        background: linear-gradient(to bottom, #ffd1d1 29%,#f4c1c1 53%,#ffd1d1 88%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
-        filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffd1d1', endColorstr='#ffd1d1',GradientType=0 );
+.livescore {
+    font-family: 'Roboto', sans-serif;
+    font-weight: lighter;
+    color: white;
+
+    .column {
+      display: inline-block;
     }
 
-    .team-name {
-        padding-right: 5px;
+    .livescore-wrapper {
+      display: inline-block;
+      background-color: rgba(125,125,125,0.5);
     }
 
-    .rounds-won {
-        padding: 0 10px;
-        font-weight: bold;
-        border: 1px solid $border-color;
+    .livescore-names {
+      padding-left: 3px;
     }
 
-    .round-score {
-        padding: 3px 5px;
+    .livescore-scores > div {
+      padding: 0 5px;
     }
 
-    tr.home td {
-        border-bottom: 1px solid $border-color;
+    .livescore-divider {
+      width: 10px;
+      background-color: red;
     }
-
 }
