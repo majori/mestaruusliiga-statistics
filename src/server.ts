@@ -15,13 +15,13 @@ export async function createServer() {
     server.use('/styles', express.static(path.join(__dirname, 'styles')));
 
     server.get('/', (req, res) => {
-        res.render('pages/home', { title: 'Hey', message: 'Hello there!' })
+        res.render('pages/home', { title: 'Hey', message: 'Hello there!' });
     });
 
     // Parse category and gender
     server.use('/statistics', statistics);
 
-    server.use('/livescore', livescore)
+    server.use('/livescore', livescore);
 
     return server;
-} 
+}

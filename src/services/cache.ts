@@ -8,7 +8,7 @@ export namespace PlayerStatistics {
     // Fields which are meaningful to compare
     const rankedFields = [
         'PointsTot_ForAllPlayerStats', 'PointsPerMatch',
-        'SpikeWin', 'RecWin', 'BlockWin', 'ServeWin'
+        'SpikeWin', 'RecWin', 'BlockWin', 'ServeWin',
     ];
 
     export async function exists(options: PlayerOptions) {
@@ -45,14 +45,14 @@ export namespace PlayerStatistics {
             const multi = client.multi();
 
             _.forEach(ids, (id) => {
-                multi.get(id, err => {
+                multi.get(id, (err) => {
                     if (err) return reject(err);
                 });
             });
-            
+
             multi.exec((err, players) => {
                 if (err) return reject(err);
-                resolve(_.map(players, player => JSON.parse(player)));
+                resolve(_.map(players, (player) => JSON.parse(player)));
             });
         });
     }
@@ -67,16 +67,16 @@ export namespace PlayerStatistics {
             _.forEach(players, (player) => {
                 const id = `player:${player.PlayerID}`; // The ID format
                 multi.set(id, JSON.stringify(player), 'EX', Config.redis.expire.players);
-                
-                multi.sadd(`players:${options.category}:${options.gender}`, id)
+
+                multi.sadd(`players:${options.category}:${options.gender}`, id);
 
                 _.forEach(rankedFields, (field) => {
                     multi.ZADD(field, _.get<RefinedStatistics, number>(player, field) || 0, id);
-                })
+                });
             });
 
             // Store keys of player
-            multi.sadd('keys:player', _.chain(players).first<any>().keys().value())
+            multi.sadd('keys:player', _.chain(players).first<any>().keys().value());
 
             multi.expire(`keys:player`, Config.redis.expire.players * 3);
             multi.expire(`players:${options.category}:${options.gender}`, Config.redis.expire.players);
@@ -96,10 +96,10 @@ export namespace PlayerStatistics {
                         FirstName: player.Name,
                         LastName: player.Surname,
                         FullName: `${player.Name} ${player.Surname}`,
-                        ImageUrl: `http://dataprojectimages.cloudapp.net:8080/lml/TeamPlayer/100/200/TeamPlayer_${player.TeamID}_${player.PlayerID}.jpg`,
+                        ImageUrl: `http://dataprojectimages.cloudapp.net:8080/lml/TeamPlayer/100/200/TeamPlayer_${player.TeamID}_${player.PlayerID}.jpg`, // tslint:disable-line
 
                         // Remove "%" from strings and convert to number
-                        SpikePerf: _.chain(player.SpikePerf as string).words().first<any>().toNumber().value(), 
+                        SpikePerf: _.chain(player.SpikePerf as string).words().first<any>().toNumber().value(),
                         SpikePos: _.chain(player.SpikePos as string).words().first<any>().toNumber().value(),
                         RecPos: _.chain(player.RecPos as string).words().first<any>().toNumber().value(),
                         RecPerf: _.chain(player.RecPerf as string).words().first<any>().toNumber().value(),
@@ -120,7 +120,7 @@ export namespace Livescore {
                 }
 
                 resolve(JSON.parse(data));
-            })
+            });
         });
     }
 
@@ -132,7 +132,7 @@ export namespace Livescore {
                 }
 
                 resolve();
-            })
+            });
         });
     }
 }

@@ -2,7 +2,7 @@ import * as _ from 'lodash';
 
 export namespace Config {
     export const http = {
-        hostname: (process.env.hostname || '127.0.0.1') as string,
+        hostname: (process.env.hostname || '192.168.1.200') as string,
         port: (process.env.port || 4000) as number,
     };
 
@@ -15,16 +15,16 @@ export namespace Config {
                 servername: process.env.redis_host
             } : undefined
         },
-        
+
         // Seconds until redis keys expire
         expire: {
             players: process.env.redis_expire_players ? _.toNumber(process.env.redis_expire_players) : 3600, // seconds
             scores: process.env.redis_expire_scores ? _.toNumber(process.env.redis_expire_scores) : 60, // seconds
-        }
+        },
     };
 
     export const scraper = {
         pageExpire: 10 * 60 * 1000, // milliseconds
         processInterval: 5 * 1000, // milliseconds
-    }
+    };
 }

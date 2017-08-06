@@ -1,9 +1,9 @@
 import * as _ from 'lodash';
 
-import { Statistics as StatisticService } from './services/api';
+import * as StatisticService from './services/api';
 import * as cache from './services/cache';
 
-import { Scraper } from './services/scraper/scraper'
+import { Scraper } from './services/scraper/scraper';
 import { MestaruusliigaScorePage } from './services/scraper/scorePages/mestaruusliiga';
 
 const scraper = new Scraper();
@@ -17,7 +17,7 @@ export namespace Statistics {
             if (err === 'NoPlayers') {
                 const players = await StatisticService.getData({
                     options,
-                    maximumRows: await StatisticService.getCount({ options })
+                    maximumRows: await StatisticService.getCount({ options }),
                 });
 
                 await cache.PlayerStatistics.set(options, players);
@@ -41,10 +41,10 @@ export namespace Statistics {
                 const value = _.get<RefinedStatistics, string | number>(player, key);
 
                 if (_.isObject(searchValue) && _.isNumber(value)) {
-                    return _.inRange(value, searchValue.min || 0, searchValue.max)
+                    return _.inRange(value, searchValue.min || 0, searchValue.max);
                 } else {
                     if (_.isString(value)) {
-                        return _.includes(_.toLower(value), _.toLower(searchValue))
+                        return _.includes(_.toLower(value), _.toLower(searchValue));
                     } else if (_.isNumber(value)) {
                         return _.eq(value, searchValue);
                     }
@@ -75,7 +75,7 @@ export namespace Livescore {
     export async function get(id: string, scorePageId: string): Promise<MatchPoints> {
         const combinedId = `${scorePageId}:${id}`;
         const scores = await cache.Livescore.get(combinedId);
-        
+
         if (scores) {
             scraper.extendPageExpireTime(combinedId);
             return scores;
@@ -85,7 +85,7 @@ export namespace Livescore {
             await scraper.createScorePage(MestaruusliigaScorePage, { id });
         }
 
-        await new Promise(res => setTimeout(res, 3000));
+        await new Promise((res) => setTimeout(res, 3000));
 
         return await Livescore.get(id, scorePageId);
     }
