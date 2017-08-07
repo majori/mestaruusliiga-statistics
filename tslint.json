@@ -6,7 +6,7 @@
     "jsRules": {},
     "rules": {
         "quotemark": [
-            true,ß
+            true,
             "single"
         ],
         "ordered-imports": [
@@ -26,6 +26,9 @@
           false
         ],
         "no-console": [
+          false
+        ],
+        "interface-name": [
           false
         ]
     },

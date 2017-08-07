@@ -3,8 +3,8 @@ import * as _ from 'lodash';
 import * as StatisticService from './services/api';
 import * as cache from './services/cache';
 
-import { Scraper } from './services/scraper/scraper';
-import { MestaruusliigaScorePage } from './services/scraper/scorePages/mestaruusliiga';
+import { Scraper } from './services/live-scraper/scraper';
+import { MestaruusliigaScorePage } from './services/live-scraper/scorePages/mestaruusliiga';
 
 const scraper = new Scraper();
 scraper.init();

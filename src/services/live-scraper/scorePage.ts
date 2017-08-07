@@ -1,8 +1,8 @@
 import { Page } from './scraper';
 
 export abstract class ScorePage extends Page {
-    abstract parseScores: () => MatchPoints;
-    async evaluateScores() {
+    public abstract parseScores: () => MatchPoints;
+    public async evaluateScores() {
         return this.page.evaluate(this.parseScores);
     }
 }

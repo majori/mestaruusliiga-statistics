@@ -5,7 +5,7 @@ import * as _ from 'lodash';
 const categories = {
     regular: {
         men: [ 19, 21 ],
-        women: [ 21, 0 ],
+        women: [ 21, 23 ],
     },
     playoffs: {
         men: [ 24, 26 ],

@@ -3,11 +3,11 @@ import { ScorePage, ScorePageEnum } from '../scorePage';
 export class MestaruusliigaScorePage extends ScorePage {
     public id: string = ScorePageEnum.MestaruusLiiga;
 
-    url(options: ScorePageOptions) {
+    public url(options: ScorePageOptions) {
         return `http://lml-web.dataproject.com/DV_LiveScore.aspx?ID=${this.options.id}`;
     }
 
-    parseScores = function() {
+    public parseScores = function() { // tslint:disable-line
         return {
             home: {
                 name: document.getElementById('LBL_TeamHome')!.innerHTML,
@@ -17,22 +17,22 @@ export class MestaruusliigaScorePage extends ScorePage {
                     +document.getElementById('LB_Set2Casa')!.innerHTML,
                     +document.getElementById('LB_Set3Casa')!.innerHTML,
                     +document.getElementById('LB_Set4Casa')!.innerHTML,
-                    +document.getElementById('LB_Set5Casa')!.innerHTML
+                    +document.getElementById('LB_Set5Casa')!.innerHTML,
                 ],
-                golden: document.getElementById('LBL_GoldenSetHome')!.innerHTML
+                golden: document.getElementById('LBL_GoldenSetHome')!.innerHTML,
             },
             guest: {
                 name: document.getElementById('LBL_TeamGuest')!.innerHTML,
                 roundsWon: +document.getElementById('LBL_WonSetGuest')!.innerHTML,
-                scores: [ 
+                scores: [
                     +document.getElementById('LB_Set1Ospiti')!.innerHTML,
                     +document.getElementById('LB_Set2Ospiti')!.innerHTML,
                     +document.getElementById('LB_Set3Ospiti')!.innerHTML,
                     +document.getElementById('LB_Set4Ospiti')!.innerHTML,
-                    +document.getElementById('LB_Set5Ospiti')!.innerHTML
+                    +document.getElementById('LB_Set5Ospiti')!.innerHTML,
                 ],
-                golden: document.getElementById('LBL_GoldenSetGuest')!.innerHTML
-            }
+                golden: document.getElementById('LBL_GoldenSetGuest')!.innerHTML,
+            },
         };
-    }
+    };
 }

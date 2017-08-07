@@ -15,17 +15,17 @@ router.use('/:category/:gender', (req: ExtendedRequest, res: Response, next: Nex
     ) {
         req.options = {
             category: req.params.category as PlayerCategory,
-            gender: req.params.gender as PlayerGender
+            gender: req.params.gender as PlayerGender,
         };
 
         next();
     } else {
-        res.send("Invalid category or gender");
+        res.send('Invalid category or gender');
     }
 });
 
 router.get('/:category/:gender/', (req, res) => {
-    res.render('pages/statistics')
+    res.render('pages/statistics');
 });
 
 // --------------  PLAYER ROUTER ---------------------
@@ -45,7 +45,7 @@ playerRouter.get('/raw', async (req: ExtendedRequest, res) => {
 });
 
 playerRouter.get('/search/raw', async (req: ExtendedRequest, res) => {
-    res.json(await Statistics.searchPlayers(req.query, req.options))
+    res.json(await Statistics.searchPlayers(req.query, req.options));
 });
 
 router.use('/:category/:gender/players', playerRouter);

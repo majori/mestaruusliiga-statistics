@@ -2,7 +2,7 @@ import * as _ from 'lodash';
 
 export namespace Config {
     export const http = {
-        hostname: (process.env.hostname || '192.168.1.200') as string,
+        hostname: (process.env.hostname || '127.0.0.1') as string,
         port: (process.env.port || 4000) as number,
     };
 

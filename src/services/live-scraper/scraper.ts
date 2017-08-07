@@ -54,7 +54,7 @@ export class Scraper {
         this.openPages.scorePages[id] = {
             id,
             requestedAt: Date.now(),
-            page: scorePage
+            page: scorePage,
         };
 
         return id;
@@ -76,7 +76,7 @@ export class Scraper {
                 } else {
                     console.log('Closing page', pageInfo.id);
                     pageInfo.page.close();
-                    delete this.openPages.scorePages[pageInfo.id]
+                    delete this.openPages.scorePages[pageInfo.id];
                 }
 
             });
@@ -111,7 +111,7 @@ export abstract class Page {
         await this.page.open(this.url(this.options));
 
         console.log(`Page ${this.url(this.options)} opened, waiting ${this.waitTime}ms page to load`);
-        await new Promise(res => setTimeout(res, this.waitTime));
+        await new Promise((res) => setTimeout(res, this.waitTime));
     }
 
     public async close() {
