@@ -11,13 +11,9 @@ block content
         .team-name.home= self.home.name
         .team-name.guest= self.guest.name
 
-      .livescore-divider.column
-
       .livescore-rounds.column
         .rounds.home= self.home.roundsWon
         .rounds.guest= self.guest.roundsWon
-
-      .livescore-divider.column
 
       .livescore-scores.column
         - for (let x = 0; (x <= roundsPlayed) && (x < maxRounds); x++)

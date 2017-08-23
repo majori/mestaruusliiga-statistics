@@ -1,5 +1,3 @@
-$border-color: grey;
-
 .livescore {
     font-family: 'Roboto', sans-serif;
     font-weight: lighter;
@@ -18,7 +16,7 @@ $border-color: grey;
 
     .livescore-rounds > div {
       font-weight: bold;
-      text-shadow: 0px 0px 1px white;
+      text-shadow: 0px 0px 2px white;
     }
 
     .livescore-wrapper {
@@ -28,6 +26,7 @@ $border-color: grey;
     .livescore-wrapper > div {
       padding-top: 4px;
       padding-bottom: 4px;
+      box-shadow: 4px 4px 5px grey, inset 2px 2px 2px rgba(255, 255, 255, 0.4), inset -2px -2px 2px rgba(0, 0, 0, 0.4);
     }
 
     .livescore-names {
@@ -60,8 +59,5 @@ $border-color: grey;
       text-shadow: 0px 0px 1px white;
     }
 
-    .livescore-divider {
-      background: url('/images/livescore/separator.svg');
-      background-size: cover;
-    }
+    .livescore-divider {}
 }
