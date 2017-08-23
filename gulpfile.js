@@ -8,7 +8,7 @@ gulp.task('copy-views', () => {
 });
 
 gulp.task('copy-images', () => {
-  return gulp.src(['./src/img']).pipe(gulp.dest(`${BUILD_DIR}/img`));
+  return gulp.src(['./src/img/**/*']).pipe(gulp.dest(`${BUILD_DIR}/img`));
 });
 
 gulp.task('sass', () => {
