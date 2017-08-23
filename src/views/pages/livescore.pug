@@ -3,7 +3,7 @@ extends ../layout/root
 block content
 
   - var roundsPlayed = self.home.roundsWon + self.guest.roundsWon
-  - var maxRounds = (self.home.roundsWon >= 3 || self.guest.roundsWon >= 3) ? (roundsPlayed - 1) : 5;
+  - var maxRounds = (self.home.roundsWon >= 3 || self.guest.roundsWon >= 3) ? roundsPlayed : 5;
 
   .livescore
     .livescore-wrapper
@@ -20,21 +20,7 @@ block content
       .livescore-divider.column
 
       .livescore-scores.column
-        .score-1.column
-          .score.home= self.home.scores[0]
-          .score.guest= self.guest.scores[0]
-        .score-2.column
-          .score.home= self.home.scores[1]
-          .score.guest= self.guest.scores[1]
-        .score-3.column
-          .score.home= self.home.scores[2]
-          .score.guest= self.guest.scores[2]
-        .score-4.column
-          .score.home= self.home.scores[3]
-          .score.guest= self.guest.scores[3]
-        .score-5.column
-          .score.home= self.home.scores[4]
-          .score.guest= self.guest.scores[4]
-        .score-6.column
-          .score.home= self.home.scores[5]
-          .score.guest= self.guest.scores[5]
+        - for (let x = 0; (x <= roundsPlayed) && (x < maxRounds); x++)
+          .column(class={ active: x === roundsPlayed })
+            .score.home= self.home.scores[x]
+            .score.guest= self.guest.scores[x]

@@ -7,6 +7,10 @@ gulp.task('copy-views', () => {
     return gulp.src(['./src/views/**/*.pug']).pipe(gulp.dest(`${BUILD_DIR}/views`));
 });
 
+gulp.task('copy-images', () => {
+  return gulp.src(['./src/img']).pipe(gulp.dest(`${BUILD_DIR}/img`));
+});
+
 gulp.task('sass', () => {
     return gulp.src('./src/styles/main.scss')
         .pipe(sass().on('error', sass.logError))
@@ -17,4 +21,4 @@ gulp.task('watch', () => {
     gulp.watch('./src/styles/*.scss', ['sass']);
 });
 
-gulp.task('default', ['copy-views', 'sass']);
+gulp.task('default', ['copy-views', 'copy-images', 'sass']);

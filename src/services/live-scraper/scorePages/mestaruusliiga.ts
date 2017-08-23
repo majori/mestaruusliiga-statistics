@@ -7,6 +7,8 @@ export class MestaruusliigaScorePage extends ScorePage {
         return `http://lml-web.dataproject.com/DV_LiveScore.aspx?ID=${this.options.id}`;
     }
 
+    // This function is used in PhantomJS, for that reason
+    // arrow function notation can not be used
     public parseScores = function() { // tslint:disable-line
         return {
             home: {

@@ -13,14 +13,14 @@ export async function createServer() {
     server.set('views', path.join(__dirname, 'views'));
 
     server.use('/styles', express.static(path.join(__dirname, 'styles')));
+    server.use('/images', express.static(path.join(__dirname, 'img')));
 
     server.get('/', (req, res) => {
-        res.render('pages/home', { title: 'Hey', message: 'Hello there!' });
+        res.render('pages/home');
     });
 
-    // Parse category and gender
+    // Configure routes
     server.use('/statistics', statistics);
-
     server.use('/livescore', livescore);
 
     return server;

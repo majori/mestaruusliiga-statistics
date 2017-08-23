@@ -46,16 +46,19 @@ export class Scraper {
         if (!this.instance) throw new Error();
 
         const scorePage = new scorePageClass(await this.instance.createPage(), pageOptions);
-        await scorePage.openPage();
-
         const id = `${scorePage.id}:${pageOptions.id}`;
 
-        console.log(`New score page opened with id ${id}`);
+        // Page already exists, exit
+        if (this.openPages.scorePages[id]) return;
+
         this.openPages.scorePages[id] = {
             id,
             requestedAt: Date.now(),
             page: scorePage,
         };
+
+        await scorePage.openPage();
+        console.log(`New score page opened with id ${id}`);
 
         return id;
     }
@@ -93,7 +96,7 @@ export class Scraper {
             }
         }
         this.instance.exit();
-        this.instance = undefined;
+        delete this.instance;
     }
 }
 

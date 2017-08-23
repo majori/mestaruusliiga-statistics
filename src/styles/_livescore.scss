@@ -9,21 +9,54 @@ $border-color: grey;
       display: inline-block;
     }
 
-    .livescore-wrapper {
-      display: inline-block;
-      background-color: rgba(125,125,125,0.5);
-    }
-
-    .livescore-names {
-      padding-left: 3px;
-    }
-
-    .livescore-scores > div {
+    .livescore-rounds {
+      background: url('/images/livescore/taulu_3.png') no-repeat;
+      background-size: cover;
+      margin: 0 1px;
       padding: 0 5px;
     }
 
+    .livescore-rounds > div {
+      font-weight: bold;
+      text-shadow: 0px 0px 1px white;
+    }
+
+    .livescore-wrapper {
+      display: inline-block;
+    }
+
+    .livescore-wrapper > div {
+      padding-top: 4px;
+      padding-bottom: 4px;
+    }
+
+    .livescore-names {
+      background: url('/images/livescore/taulu_2.png') no-repeat;
+      background-size: cover;
+      padding: 0 5px;
+      border-radius: 7px 0 0 7px;
+    }
+
+    .livescore-scores {
+      background: url('/images/livescore/taulu_5.png') no-repeat;
+      background-size: cover;
+      padding-top: 0 !important;
+      padding-bottom: 0 !important;
+      padding-right: 25px;
+      border-radius: 0 25px 25px 0;
+    }
+
+    .livescore-scores > div {
+      padding: 4px 5px;
+    }
+
+    .livescore-scores > div.active {
+      background: url('/images/livescore/taulu_6.png') no-repeat;
+      background-size: cover;
+    }
+
     .livescore-divider {
-      width: 10px;
-      background-color: red;
+      background: url('/images/livescore/separator.svg');
+      background-size: cover;
     }
 }
