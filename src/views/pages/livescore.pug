@@ -22,5 +22,11 @@ block content
       .livescore-scores.column
         - for (let x = 0; (x <= roundsPlayed) && (x < maxRounds); x++)
           .column(class={ active: x === roundsPlayed })
-            .score.home= self.home.scores[x]
-            .score.guest= self.guest.scores[x]
+            - const diff = self.home.scores[x] - self.guest.scores[x];
+            - const abs = diff < 0 ? -diff : diff
+            .score.home(class={
+              roundWon: (self.home.scores[x] >= 25 && abs >= 2)
+            })= self.home.scores[x]
+            .score.guest(class={
+              roundWon: (self.guest.scores[x] >= 25 && abs >= 2)
+            })= self.guest.scores[x]

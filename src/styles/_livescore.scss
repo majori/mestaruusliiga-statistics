@@ -55,6 +55,11 @@ $border-color: grey;
       background-size: cover;
     }
 
+    .livescore-scores .roundWon {
+      font-weight: bold;
+      text-shadow: 0px 0px 1px white;
+    }
+
     .livescore-divider {
       background: url('/images/livescore/separator.svg');
       background-size: cover;
