@@ -8,13 +8,20 @@ export async function getMatches() {
     .query({ joukkue: 12973 });
 
   const $ = load(res.text);
-  const rows =  $('.ottelulista tbody tr');
 
-  _.map(rows, (row) => {
-    const y = load(row);
-    const z = y('td').children();
+  const matches: any[] = [];
 
-    console.log(z.html());
+  $('.ottelulista tbody tr').each((i, e) => {
+    const $$ = $(e);
+    matches.push({
+      home: $$.find('td.col_kotisiisti > a').text(),
+      guest: $$.find('td.col_vierassiisti > a').text(),
+      meta: {
+        date: $$.find('td.col_pvmsiisti').text(),
+        place: $$.find('td.col_info').text(),
+      },
+    });
   });
-  return;
+
+  return matches;
 }
