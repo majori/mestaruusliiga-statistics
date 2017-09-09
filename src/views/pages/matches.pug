@@ -4,4 +4,5 @@ table
       tr
         td=match.home
         td=match.guest
-        td=match.date
+        td=match.meta.date.format('DD.MM.YYYY [klo] HH:mm')
+        td=match.meta.place
