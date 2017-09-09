@@ -3,10 +3,10 @@ import * as _ from 'lodash';
 import * as moment from 'moment';
 import * as request from 'superagent';
 
-export async function getMatches() {
+export async function getTeamMatches(teamID: number, previous?: boolean) {
   const res = await request
-    .get('https://lentopallo.torneopal.fi/taso/joukkue.php')
-    .query({ joukkue: 12973 });
+    .get('https://lentopallo.torneopal.fi/taso/naytajoukkue.php')
+    .query({ joukkue: teamID, arkisto: previous ? 1 : 0 });
 
   const $ = load(res.text);
 
@@ -17,24 +17,35 @@ export async function getMatches() {
     const match = {
       home: $$.find('td.col_kotisiisti > a').text(),
       guest: $$.find('td.col_vierassiisti > a').text(),
+      rounds: '',
       meta: {
-        place: $$.find('td.col_info').text().slice(5),
-        date: moment(),
+        place: '',
+        date: '',
       },
     };
 
-    const clock = _.split($$.find('td.col_info').text().slice(0, 5), ':', 2);
+    const date = moment();
     const rawDate = $$.find('td.col_pvmsiisti').text().split('.');
 
-    match.meta.date.date(+rawDate[0]);
-    match.meta.date.month(+rawDate[1]);
+    date.date(+rawDate[0]);
+    date.month(+rawDate[1]);
 
     if (rawDate[2]) {
-      match.meta.date.year(+rawDate[2]);
+      date.year(+rawDate[2]);
     }
 
-    match.meta.date.hour(+clock[0]);
-    match.meta.date.minute(+clock[1]);
+    if (date.isAfter(moment())) {
+      match.meta.place = $$.find('td.col_info').text().slice(5);
+
+      const clock = _.split($$.find('td.col_info').text().slice(0, 5), ':', 2);
+      date.hour(+clock[0]);
+      date.minute(+clock[1]);
+
+    } else {
+      match.rounds = $$.find('td.col_info').text();
+    }
+
+    match.meta.date = date.format(`DD.MM.YYYY${match.rounds ? '' : ' [klo] HH:mm'}`);
 
     matches.push(match);
   });

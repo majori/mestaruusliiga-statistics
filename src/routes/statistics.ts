@@ -55,11 +55,11 @@ router.use('/:category/:gender/players', playerRouter);
 const matchRouter = express.Router();
 
 matchRouter.get('/', async (req, res) => {
-  res.render('pages/matches', { self: true, matches: await Match.getAll() });
+  res.render('pages/matches', { self: true, matches: await Match.getTeam(12973) });
 });
 
 matchRouter.get('/raw', async (req, res) => {
-  res.json(await Match.getAll());
+  res.json(await Match.getTeam(12973));
 });
 
 router.use('/:category/:gender/matches', matchRouter);
