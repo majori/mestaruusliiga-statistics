@@ -23,4 +23,38 @@ export namespace Config {
         pageExpire: 10 * 60 * 1000, // milliseconds
         processInterval: 5 * 1000, // milliseconds
     };
+
+    // Corresponding CompID and PhaseID for API calls
+    export const apiIds = {
+      regular: {
+          men: {
+            compId: 19,
+            phaseId: 21,
+          },
+          women: {
+            compId: 21,
+            phaseId: 23,
+          },
+      },
+      playoffs: {
+          men: {
+            compId: 24,
+            phaseId: 26,
+          },
+          women: {
+            compId: 23,
+            phaseId: 25,
+          },
+      },
+      qualifiers: {
+          men: {
+            compId: 26,
+            phaseId: 28,
+          },
+          women: {
+            compId: 0,
+            phaseId: 0,
+          },
+      },
+    };
 }

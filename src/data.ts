@@ -5,6 +5,7 @@ import * as cache from './services/cache';
 
 import { Scraper } from './services/live-scraper/scraper';
 import { MestaruusliigaScorePage } from './services/live-scraper/scorePages/mestaruusliiga';
+import { getMatches } from './services/scraper/matches';
 
 const scraper = new Scraper();
 scraper.init();
@@ -89,4 +90,10 @@ export namespace Livescore {
 
         return await Livescore.get(id, scorePageId);
     }
+}
+
+export namespace Match {
+  export async function getAll() {
+    return getMatches();
+  }
 }

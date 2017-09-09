@@ -4,7 +4,7 @@ import * as _ from 'lodash';
 import * as path from 'path';
 
 import { ExtendedRequest } from '../models/http';
-import { Statistics } from '../data';
+import { Statistics, Match } from '../data';
 
 const router = express.Router();
 
@@ -49,5 +49,26 @@ playerRouter.get('/search/raw', async (req: ExtendedRequest, res) => {
 });
 
 router.use('/:category/:gender/players', playerRouter);
+
+// --------------  MATCH ROUTER ---------------------
+//
+const matchRouter = express.Router();
+
+matchRouter.get('/', async (req, res) => {
+  // TODO: Get matches dynamically
+  const matches = [
+    { home: 'Team1', guest: 'Team2', date: 'x.y.z' },
+    { home: 'Team1', guest: 'Team2', date: 'x.y.z' },
+    { home: 'Team1', guest: 'Team2', date: 'x.y.z' },
+  ];
+
+  res.render('pages/matches', { self: true, matches });
+});
+
+matchRouter.get('/raw', async (req, res) => {
+  // res.render('pages/matches');
+});
+
+router.use('/:category/:gender/matches', matchRouter);
 
 export default router;

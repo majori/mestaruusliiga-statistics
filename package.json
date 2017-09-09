@@ -5,7 +5,7 @@
   "main": "dist/index.js",
   "scripts": {
     "start": "node dist/index.js",
-    "build": "tsc --listEmittedFiles && gulp",
+    "build": "concurrently \"tsc --listEmittedFiles\" \"gulp\"",
     "dev": "concurrently \"nodemon --exec ts-node --inspect=5858 src/index.ts\" \"gulp watch\"",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -17,12 +17,13 @@
     "node": "8.1.4"
   },
   "author": "Antti Kivimäki",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/majori/mestaruusliiga-statistics/issues"
   },
   "homepage": "https://github.com/majori/mestaruusliiga-statistics#readme",
   "dependencies": {
+    "cheerio": "^1.0.0-rc.2",
     "express": "^4.15.3",
     "lodash": "^4.17.4",
     "phantom": "^4.0.5",
@@ -33,6 +34,7 @@
     "typescript": "^2.4.2"
   },
   "devDependencies": {
+    "@types/cheerio": "^0.22.2",
     "@types/express": "^4.0.36",
     "@types/lodash": "^4.14.71",
     "@types/node": "^8.0.15",
