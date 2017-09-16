@@ -1,9 +1,13 @@
-table
-  tbody(class="matches")
-    each match in self.matches
-      tr
-        td=match.home
-        td=match.guest
-        td=match.rounds
-        td=match.meta.date
-        td=match.meta.place
+extends ../layout/root
+
+block content
+
+  table
+    tbody(class="matches")
+      each match in self.matches
+        tr
+          td=match.home
+          td=match.guest
+          td=match.rounds
+          td=match.meta.date
+          td=match.meta.place
