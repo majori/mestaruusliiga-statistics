@@ -14,13 +14,13 @@ export async function getTeamMatches(teamID: number, previous?: boolean) {
 
   $('.ottelulista tbody tr').each((i, e) => {
     const $$ = $(e);
-    const match = {
+    const match: Match = {
       home: $$.find('td.col_kotisiisti > a').text(),
       guest: $$.find('td.col_vierassiisti > a').text(),
       rounds: '',
       meta: {
         place: '',
-        date: '',
+        date: null,
       },
     };
 
@@ -45,10 +45,13 @@ export async function getTeamMatches(teamID: number, previous?: boolean) {
       match.rounds = $$.find('td.col_info').text();
     }
 
-    match.meta.date = date.format(`DD.MM.YYYY${match.rounds ? '' : ' [klo] HH:mm'}`);
+    match.meta.date = date;
 
     matches.push(match);
   });
 
-  return matches;
+  return {
+    name: _.trim($('.joukkueotsikko').text()),
+    matches,
+  };
 }

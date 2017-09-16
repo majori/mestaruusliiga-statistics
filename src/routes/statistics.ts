@@ -2,6 +2,7 @@ import * as express from 'express';
 import { Request, Response, NextFunction} from 'express';
 import * as _ from 'lodash';
 import * as path from 'path';
+import * as moment from 'moment';
 
 import { ExtendedRequest } from '../models/http';
 import { Statistics, Match } from '../data';
@@ -55,7 +56,7 @@ router.use('/:category/:gender/players', playerRouter);
 const matchRouter = express.Router();
 
 matchRouter.get('/', async (req, res) => {
-  res.render('pages/matches', { self: true, matches: await Match.getTeam(12973) });
+  res.render('pages/matches', { self: true, ...(await Match.getTeam(12973)), moment });
 });
 
 matchRouter.get('/raw', async (req, res) => {

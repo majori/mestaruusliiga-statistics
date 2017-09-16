@@ -1,7 +1,27 @@
-.matches tr {
-  height: 20px;
-}
+.matches {
+  font-family: 'Source Sans Pro', Georgia, 'Times New Roman', Times, serif;
+  border-collapse: collapse;
 
-.matches th {
-  text-align: left;
+  tr.header {
+    background: #ec101a !important;
+    color: white;
+  }
+
+  tr:nth-child(odd) {
+    background: #cacaca;
+  }
+
+  th {
+    text-align: left;
+  }
+
+  td, th {
+    padding-left: 15px;
+    padding-right: 15px;
+    height: 34px;
+  }
+
+  td.bold {
+    font-weight: bold;
+  }
 }
