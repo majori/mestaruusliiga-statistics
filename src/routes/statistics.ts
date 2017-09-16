@@ -3,6 +3,7 @@ import { Request, Response, NextFunction} from 'express';
 import * as _ from 'lodash';
 import * as path from 'path';
 import * as moment from 'moment';
+import * as pug from 'pug';
 
 import { ExtendedRequest } from '../models/http';
 import { Statistics, Match } from '../data';
@@ -55,12 +56,23 @@ router.use('/:category/:gender/players', playerRouter);
 //
 const matchRouter = express.Router();
 
+// TODO: Parse from url
+const teamId = 12973;
+
 matchRouter.get('/', async (req, res) => {
-  res.render('pages/matches', { self: true, ...(await Match.getTeam(12973)), moment });
+  res.render('pages/matches', { self: true, ...(await Match.getTeam(teamId)), moment });
+});
+
+matchRouter.get('/widget', async (req, res) => {
+  const text = pug.renderFile(
+    './src/views/pages/matches.pug',
+    { self: true, ...(await Match.getTeam(teamId)), moment },
+  );
+  res.send(`document.write('${text}');`);
 });
 
 matchRouter.get('/raw', async (req, res) => {
-  res.json(await Match.getTeam(12973));
+  res.json(await Match.getTeam(teamId));
 });
 
 router.use('/:category/:gender/matches', matchRouter);
