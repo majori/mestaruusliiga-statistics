@@ -2,12 +2,18 @@ extends ../layout/root
 
 block content
 
-  table
-    tbody(class="matches")
+  table(class="matches")
+    thead
+      th Ajankohta
+      th Koti
+      th Vieras
+      th Tulos
+      th Paikka
+    tbody
       each match in self.matches
         tr
+          td=match.meta.date
           td=match.home
           td=match.guest
           td=match.rounds
-          td=match.meta.date
           td=match.meta.place
