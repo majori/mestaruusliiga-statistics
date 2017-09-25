@@ -28,7 +28,7 @@ export async function getTeamMatches(teamID: number, previous?: boolean) {
     const rawDate = $$.find('td.col_pvmsiisti').text().split('.');
 
     date.date(+rawDate[0]);
-    date.month(+rawDate[1]);
+    date.month(+rawDate[1] - 1); // Moment accepts numbers from 0 to 11
 
     if (rawDate[2]) {
       date.year(+rawDate[2]);
